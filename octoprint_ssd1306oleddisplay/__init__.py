@@ -31,8 +31,7 @@ class Ssd1306_pioled_displayPlugin(
             logger=self._logger
         )
         self.display.start()
-        self.display.write_row(0, 'Offline')
-        self.display.commit()
+        self.clear(commit=True)
         self._logger.info('Initialized.')
 
     def on_after_startup(self, *args, **kwargs):
@@ -40,27 +39,20 @@ class Ssd1306_pioled_displayPlugin(
 
     def on_shutdown(self):
         self._printer.unregister_callback(self)
-        self.display.clear()
-        self.display.commit()
+        self.clear(commit=True)
         self.display.stop()
 
     def on_event(self, event, payload, *args, **kwargs):
         """ Display printer status events on the first line """
         self._logger.debug('on_event: %s, %s', event, payload)
         if event == Events.ERROR:
-            try:
-                self.display.write_row(0, 'Error! {}'.format(payload['error']))
-                self.display.commit()
-            except:
-                self._logger.debug('Display currently unavailable.')
+            self.write(0, 'Error! {}'.format(payload['error']), commit=True)
         elif event == Events.PRINTER_STATE_CHANGED:
-            try:
-                self.display.write_row(0, payload['state_string'])
-                if payload['state_id'] == 'OFFLINE':  # Clear printer/job messages if offline
-                    self.display.clear_rows(start=1)
-                self.display.commit()
-            except:
-                self._logger.debug('Display currently unavailable.')
+            self.write(0, payload['state_string'])
+            if payload['state_id'] == 'OFFLINE':  # Clear printer/job messages if offline
+                self.clear(start=1, commit=True)
+        elif event == Events.SHUTDOWN:
+            self.clear(commit=True)
 
     def protocol_gcode_sent_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         """ Listen for gcode commands, specifically M117 (Set LCD message) on the second line """
@@ -73,8 +65,8 @@ class Ssd1306_pioled_displayPlugin(
             ).split('\n')
             self._logger.info('Split message: "%s"', lines)
             for i in range(0, len(lines)):
-                self.display.write_row(1+i, lines[i] if i < len(lines) else '')
-            self.display.commit()
+                self.write(1+i, lines[i] if i < len(lines) else '')
+            self.commit()
 
     def on_printer_add_temperature(self, data):
         """ Display printer temperatures on the third line """
@@ -83,12 +75,7 @@ class Ssd1306_pioled_displayPlugin(
         for k in ['bed', 'tool0', 'tool1', 'tool2']:
             if k in data.keys():
                 msg.append(format_temp(k, data[k]))
-        try:
-            self.display.write_row(2, ' '.join(msg))
-            self.display.commit()
-        except:
-            self._logger.info(
-                'Failed to send temperature(S) to display')
+        self.write(2, ' '.join(msg), commit=True)
 
     def on_printer_send_current_data(self, data, **kwargs):
         """ Display print progress on fourth line """
@@ -96,14 +83,38 @@ class Ssd1306_pioled_displayPlugin(
         completion = data['progress']['completion']
 
         if completion is None:
-            self.display.write_row(3, '')  # Job complete or no job started.
+            self.write(3, '', commit=True)  # Job complete or no job started.
         else:
-            self.display.write_row(3, '{}% {}'.format(
+            self.write(3, '{}% {}'.format(
                 int(completion),
                 # format_seconds(data['progress']['printTime']),
                 format_seconds(data['progress']['printTimeLeft']),
-            ))
-        self.display.commit()
+            ), commit=True)
+
+    def write(self, line, text, commit=False):
+        """ Write line to display. """
+        try:
+            self.display.write_row(line, text)
+            if (commit):
+                self.display.commit()
+        except:
+            self._logger.debug('Display currently unavailable.')
+
+    def clear(self, start=0, end=None, commit=False):
+        """ Clear row(s). """
+        try:
+            self.display.clear_rows(start, end)
+            if (commit):
+                self.display.commit()
+        except:
+            self._logger.debug('Display currently unavailable.')
+
+    def commit(self):
+        """ Commit data to be written on screen. """
+        try:
+            self.display.commit()
+        except:
+            self._logger.debug('Display currently unavailable.')
 
     # ~~ Softwareupdate hook
 
