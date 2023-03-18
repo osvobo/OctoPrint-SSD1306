@@ -1,4 +1,3 @@
-vscode.code-workspace
 *.pyc
 *.swp
 .idea
@@ -8,4 +7,3 @@ dist
 *.egg*
 .DS_Store
 *.zip
-*.old
