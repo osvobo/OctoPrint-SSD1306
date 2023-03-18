@@ -31,7 +31,8 @@ class Ssd1306_pioled_displayPlugin(
             logger=self._logger
         )
         self.display.start()
-        self.clear(commit=True)
+        self.clear()
+        self.write(0, 'Initialized', commit=True)
         self._logger.info('Initialized.')
 
     def on_after_startup(self, *args, **kwargs):
