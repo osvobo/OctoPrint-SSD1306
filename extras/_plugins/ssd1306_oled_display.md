@@ -3,7 +3,7 @@ layout: plugin
 
 id: ssd1306_oled_display
 title: SSD1306 OLED Display
-description: Use a 128x32 SSD1306-based display to display printer and job status for OctoPrint. The plugin provides a convenient way to view job status directly on the Raspberry Pi without needing to open a web page, for printers that either don't have a display or won't respond to commands to update their display.
+description: Use a 128x32 SSD1306-based display to display printer and job status for OctoPrint.
 authors:
 - Fredrik Baberg
 license: AGPLv3
@@ -84,5 +84,8 @@ compatibility:
 ---
 
 This plugin enables the use of a SSD1306-based display to present printer- and job- status for OctoPrint.
+It provides a convenient way to view job status directly on the Raspberry Pi without needing to open a web page, for printers that either don't have a display or won't respond to commands to update their display.
+
+The plugin assumes the SSD1306 is connected by I2C through SDA, SCL.
 
 It's based on [https://github.com/jhoos/OctoPrint-SSD1306](https://github.com/jhoos/OctoPrint-SSD1306) but adopted to Python3 and a 128x32 PiOLED display.
