@@ -112,6 +112,8 @@ class Ssd1306_oled_displayPlugin(
             if data.get(k):
                 data[k] = max(0, int(data[k]))
 
+        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
+
         # Re-initialize display with new parameters.
         self.display = SSD1306(
             width=self._settings.get(['width']),
@@ -120,7 +122,6 @@ class Ssd1306_oled_displayPlugin(
             refresh_rate=self._settings.get(['refreshrate']),
             logger=self._logger
         )
-        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
 
     def get_template_configs(self):
         return [
