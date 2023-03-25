@@ -1,48 +1,34 @@
 ---
 layout: plugin
 
-id: ssd1306_pioled_display
-title: SSD1306 PiOLED Display
-description: TODO
+id: ssd1306_oled_display
+title: SSD1306 OLED Display
+description: Use a 128x32 SSD1306-based display to display printer and job status for OctoPrint. The plugin provides a convenient way to view job status directly on the Raspberry Pi without needing to open a web page, for printers that either don't have a display or won't respond to commands to update their display.
 authors:
 - Fredrik Baberg
 license: AGPLv3
 
-# TODO
-date: today's date in format YYYY-MM-DD, e.g. 2015-04-21
+date: 2023-03-25
 
-homepage: https://github.com/fredrikbaberg/OctoPrint-PiOLED-SSD1306
-source: https://github.com/fredrikbaberg/OctoPrint-PiOLED-SSD1306
-archive: https://github.com/fredrikbaberg/OctoPrint-PiOLED-SSD1306/archive/main.zip
+homepage: https://github.com/fredrikbaberg/OctoPrint-SSD1306
+source: https://github.com/fredrikbaberg/OctoPrint-SSD1306
+archive: https://github.com/fredrikbaberg/OctoPrint-SSD1306/archive/main.zip
 
-# TODO
-# Set this to true if your plugin uses the dependency_links setup parameter to include
-# library versions not yet published on PyPi. SHOULD ONLY BE USED IF THERE IS NO OTHER OPTION!
-#follow_dependency_links: false
+follow_dependency_links: false
 
-# TODO
 tags:
-- a list
-- of tags
-- that apply
-- to your plugin
-- (take a look at the existing plugins for what makes sense here)
+- display
+- ssd1306
+- PiOLED
 
-# TODO
 # When registering a plugin on plugins.octoprint.org, all screenshots should be uploaded not linked from external sites.
 screenshots:
-- url: url of a screenshot, /assets/img/...
-  alt: alt-text of a screenshot
-  caption: caption of a screenshot
-- url: url of another screenshot, /assets/img/...
-  alt: alt-text of another screenshot
-  caption: caption of another screenshot
-- ...
+- url: /assets/img/plugins/ssd1306_oled_display/pioled.jpg
+  alt: PiOLED on Raspberry Pi
+  caption: Display information on PiOLED display
 
-# TODO
-featuredimage: url of a featured image for your plugin, /assets/img/...
+featuredimage: /assets/img/plugins/ssd1306_oled_display/pioled.jpg
 
-# TODO
 # You only need the following if your plugin requires specific OctoPrint versions or
 # specific operating systems to function - you can safely remove the whole
 # "compatibility" block if this is not the case.
@@ -81,9 +67,9 @@ compatibility:
 
   os:
   - linux
-  - windows
-  - macos
-  - freebsd
+  # - windows
+  # - macos
+  # - freebsd
 
   # Compatible Python version
   #
@@ -98,4 +84,4 @@ compatibility:
 ---
 
 **TODO**: Longer description of your plugin, configuration examples etc. This part will be visible on the page at
-http://plugins.octoprint.org/plugin/ssd1306_pioled_display/
+http://plugins.octoprint.org/plugin/ssd1306_oled_display/

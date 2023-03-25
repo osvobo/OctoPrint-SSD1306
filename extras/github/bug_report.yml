@@ -1,15 +1,15 @@
 name: 🐛 Report a bug
-description: Create a bug report to help improve SSD1306 PiOLED Display
+description: Create a bug report to help improve SSD1306 OLED Display
 body:
   - type: markdown
     attributes:
       value: >-
-        **Thank you for wanting to report a bug in SSD1306 PiOLED Display!**
+        **Thank you for wanting to report a bug in SSD1306 OLED Display!**
 
-          * First, be sure you are running the [latest version of the SSD1306 PiOLED Display plugin](https://github.com/fredrikbaberg/OctoPrint-PiOLED-SSD1306/releases).
+          * First, be sure you are running the [latest version of the SSD1306 OLED Display plugin](https://github.com/fredrikbaberg/OctoPrint-OLED-SSD1306/releases).
           * You will also need to [enable debugging on the plugin](https://docs.octoprint.org/en/master/configuration/logging_yaml.html).
             * This may be done through the *Settings* > *OctoPrint* > *Logging* > *Logging Levels* section.
-            * Select the "octoprint.plugins.ssd1306_pioled_display" name, and make sure Level is "DEBUG".
+            * Select the "octoprint.plugins.ssd1306_oled_display" name, and make sure Level is "DEBUG".
             * Save, then restart OctoPrint, which allows the developers to see debug information from the moment the plugin is loaded.
           * Finally, when submitting a bug report, you **must** [include a Systeminfo Bundle](https://community.octoprint.org/t/what-is-a-systeminfo-bundle-and-how-can-i-obtain-one/29887), generated after the point the bug occurs. This allows the developers to examine the debug logs produced from your plugin installation.
 
@@ -35,8 +35,8 @@ body:
         ## Environment
   - type: input
     attributes:
-      label: Version of SSD1306 PiOLED Display
-      description: Can be found in *Settings* > *Plugin Manager*, next to "SSD1306 PiOLED Display".
+      label: Version of SSD1306 OLED Display
+      description: Can be found in *Settings* > *Plugin Manager*, next to "SSD1306 OLED Display".
     validations:
       required: true
   - type: input

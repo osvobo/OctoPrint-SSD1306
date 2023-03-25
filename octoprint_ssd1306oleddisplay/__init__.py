@@ -12,7 +12,7 @@ from octoprint_ssd1306oleddisplay.helpers import format_seconds, format_temp
 from .SSD1306 import SSD1306
 
 
-class Ssd1306_pioled_displayPlugin(
+class Ssd1306_oled_displayPlugin(
     octoprint.plugin.StartupPlugin,
     octoprint.plugin.ShutdownPlugin,
     octoprint.plugin.EventHandlerPlugin,
@@ -153,7 +153,7 @@ class Ssd1306_pioled_displayPlugin(
         # Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
         # for details.
         return {
-            "ssd1306_pioled_display": {
+            "ssd1306_oled_display": {
                 "displayName": self._plugin_name,
                 "displayVersion": self._plugin_version,
 
@@ -191,7 +191,7 @@ __plugin_pythoncompat__ = ">=3,<4"  # Only Python 3
 
 def __plugin_load__():
     global __plugin_implementation__
-    __plugin_implementation__ = Ssd1306_pioled_displayPlugin()
+    __plugin_implementation__ = Ssd1306_oled_displayPlugin()
 
     global __plugin_hooks__
     __plugin_hooks__ = {

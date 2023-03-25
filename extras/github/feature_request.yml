@@ -1,11 +1,11 @@
 name: ✨ Request a feature
-description: Request a new feature to implement in SSD1306 PiOLED Display
+description: Request a new feature to implement in SSD1306 OLED Display
 title: "[Request]"
 body:
   - type: markdown
     attributes:
       value: >
-        **Thank you for wanting to request a feature in SSD1306 PiOLED Display!**
+        **Thank you for wanting to request a feature in SSD1306 OLED Display!**
   - type: textarea
     attributes:
       label: Is your feature request related to a problem? Please describe.

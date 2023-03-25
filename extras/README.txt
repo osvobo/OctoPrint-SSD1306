@@ -1,6 +1,6 @@
 Currently Cookiecutter generates the following helpful extras to this folder:
 
-ssd1306_pioled_display.md
+ssd1306_oled_display.md
     Data file for plugins.octoprint.org. Fill in the missing TODOs once your
     plugin is ready for release and file a PR as described at
     https://plugins.octoprint.org/help/registering/ to get it published.
