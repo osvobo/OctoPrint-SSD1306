@@ -24,7 +24,14 @@ class SSD1306(threading.Thread):
     _rows = []
     _committed_rows = []
 
-    def __init__(self, width=128, height=32, fontsize=8, refresh_rate=1, logger=None):
+    def __init__(
+        self,
+        width=128,
+        height=32,
+        fontsize=8,
+        refresh_rate=1,
+        logger=None,
+    ):
         super(SSD1306, self).__init__()
 
         # Setup variables
@@ -39,32 +46,60 @@ class SSD1306(threading.Thread):
         #     'font/PressStart2P.ttf'), self._fontsize)
         self._image = Image.new('1', (self._width, self._height))
         self._draw = ImageDraw.Draw(self._image)
-        # Only allow as many rows as can fit on screen.
+        # Start with the same number of rows as set by dimensions.
         self._rows = [''] * round(self._height/self._fontsize)
 
         try:
             i2c = busio.I2C(SCL, SDA)
             self._display = adafruit_ssd1306.SSD1306_I2C(
-                self._width, self._height, i2c)
+                self._width,
+                self._height,
+                i2c,
+            )
             self.log('Display initialized', level=DEBUG)
         except:
             self.log('Failed to initialize display', level=WARN)
 
         self.log(
-            'Width: {}, height: {}'.format(self._width, self._height)
-            , level=DEBUG)
+            'Width: {}, height: {}'.format(self._width, self._height), level=DEBUG)
 
     # Clear content.
-    def clear_rows(self, start=0, end=None):
-        """ Clear content """
-        _start = start
-        _end = len(self._rows)-1 if end is None else end
-        if (_start in range(0, len(self._rows)) and _end in range(0, len(self._rows))):
-            for i in range(start, _end):
-                self._rows[i] = ''
+    def clear_rows(self, start=None, end=None):
+        """
+        Clear content.
+        - All rows if no arguments are set.
+        - From first row if set.
+        - Only one row if end is not set.
+        - Until row `end` if set.
+        - Until end if `end=-1`.
+        """
+        if start is None and end is None:
+            _start = 0
+            _end = len(self._rows)
         else:
-            self.log('Indices out of range for clear_rows: [{}, {}] but should be in [{}, {}]'.format(
-                start, _end, 0, len(self._rows)-1), level=INFO)
+            if start == None:
+                _start = 0
+            elif start <= len(self._rows) and start >= 0:
+                _start = start
+            else:
+                self.log('Start is out of range.', level=ERROR)
+                raise IndexError('Start out of range')
+
+            if end == None:
+                _end = _start+1
+            elif end == -1:
+                _end = len(self._rows)
+            elif end <= len(self._rows):
+                _end = end+1
+            else:
+                self.log('End is out of range.', level=ERROR)
+                raise IndexError('End out of range')
+            
+            if _end <= _start:
+                raise IndexError('End should not be smaller than start.')
+
+        for i in range(_start, _end):
+            self._rows[i] = ''
 
     # Write content to row.
     def write_row(self, row, text):
@@ -74,6 +109,8 @@ class SSD1306(threading.Thread):
         else:
             self.log('Row index too large, {} > {}'.format(
                 row, len(self._rows)), level=INFO)
+            raise IndexError('Row index out of range, got {} but should be in range(0, {})'.format(
+                row, len(self._rows)))
 
     def commit(self):
         """ Send data to be shown on the display. """
@@ -119,4 +156,4 @@ class SSD1306(threading.Thread):
             else:
                 self._logger.info(message)
         else:
-            print(message)
+            print('{}: {}'.format(level, message))
