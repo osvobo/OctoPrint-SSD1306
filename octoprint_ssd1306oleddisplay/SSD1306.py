@@ -133,7 +133,7 @@ class SSD1306(threading.Thread):
                 self._display.image(self._image)  # Send image to display
                 self._display.show()  # Show
             except:
-                self._image.save('test/img.png')
+                # self._image.save('test/img.png')
                 self.log('Failed to send to display', level=DEBUG)
             sleep(1/self._refresh_rate)
 
