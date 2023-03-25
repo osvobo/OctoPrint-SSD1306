@@ -50,6 +50,10 @@ class SSD1306(threading.Thread):
         except:
             self.log('Failed to initialize display', level=WARN)
 
+        self.log(
+            'Width: {}, height: {}'.format(self._width, self._height)
+            , level=DEBUG)
+
     # Clear content.
     def clear_rows(self, start=0, end=None):
         """ Clear content """

@@ -17,57 +17,44 @@ class Ssd1306_pioled_displayPlugin(
     octoprint.plugin.ShutdownPlugin,
     octoprint.plugin.EventHandlerPlugin,
     octoprint.printer.PrinterCallback,
+    octoprint.plugin.SettingsPlugin,
+    octoprint.plugin.TemplatePlugin,
 ):
 
     def __init__(self):
         self.display = None
 
-    def on_startup(self, *args, **kwargs):
+    def on_after_startup(self, *args, **kwargs):
         self._logger.info('Initializing plugin')
         self.display = SSD1306(
-            width=128,
-            height=32,
+            width=self._settings.get(['width']),
+            height=self._settings.get(['height']),
             refresh_rate=1,
             logger=self._logger
         )
         self.display.start()
-        self.clear()
-        self.write(0, 'Initialized', commit=True)
-        self._logger.info('Initialized.')
-
-    def on_after_startup(self, *args, **kwargs):
+        self._clear_display()
+        self._write_line_to_display(0, 'Initialized', commit=True)
         self._printer.register_callback(self)
+        self._logger.info('Initialized.')
 
     def on_shutdown(self):
         self._printer.unregister_callback(self)
-        self.clear(commit=True)
+        self._clear_display(commit=True)
         self.display.stop()
 
     def on_event(self, event, payload, *args, **kwargs):
         """ Display printer status events on the first line """
         self._logger.debug('on_event: %s, %s', event, payload)
         if event == Events.ERROR:
-            self.write(0, 'Error! {}'.format(payload['error']), commit=True)
+            self._write_line_to_display(
+                0, 'Error! {}'.format(payload['error']), commit=True)
         elif event == Events.PRINTER_STATE_CHANGED:
-            self.write(0, payload['state_string'])
+            self._write_line_to_display(0, payload['state_string'])
             if payload['state_id'] == 'OFFLINE':  # Clear printer/job messages if offline
-                self.clear(start=1, commit=True)
+                self._clear_display(start=1, commit=True)
         elif event == Events.SHUTDOWN:
-            self.clear(commit=True)
-
-    def protocol_gcode_sent_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
-        """ Listen for gcode commands, specifically M117 (Set LCD message) on the second line """
-        if (gcode is not None) and (gcode == 'M117'):
-            self._logger.info('Intercepted M117 gcode: {}'.format(cmd))
-            lines = textwrap.fill(
-                text=' '.join(cmd.split(' ')[1:]),
-                width=16,  # Each char. is 8 px. wide
-                max_lines=1  # No. of available lines
-            ).split('\n')
-            self._logger.info('Split message: "%s"', lines)
-            for i in range(0, len(lines)):
-                self.write(1+i, lines[i] if i < len(lines) else '')
-            self.commit()
+            self._clear_display(commit=True)
 
     def on_printer_add_temperature(self, data):
         """ Display printer temperatures on the third line """
@@ -76,7 +63,7 @@ class Ssd1306_pioled_displayPlugin(
         for k in ['bed', 'tool0', 'tool1', 'tool2']:
             if k in data.keys():
                 msg.append(format_temp(k, data[k]))
-        self.write(2, ' '.join(msg), commit=True)
+        self._write_line_to_display(2, ' '.join(msg), commit=True)
 
     def on_printer_send_current_data(self, data, **kwargs):
         """ Display print progress on fourth line """
@@ -84,38 +71,30 @@ class Ssd1306_pioled_displayPlugin(
         completion = data['progress']['completion']
 
         if completion is None:
-            self.write(3, '', commit=True)  # Job complete or no job started.
+            # Job complete or no job started.
+            self._write_line_to_display(3, '', commit=True)
         else:
-            self.write(3, '{}% {}'.format(
+            self._write_line_to_display(3, '{}% {}'.format(
                 int(completion),
                 # format_seconds(data['progress']['printTime']),
                 format_seconds(data['progress']['printTimeLeft']),
             ), commit=True)
 
-    def write(self, line, text, commit=False):
-        """ Write line to display. """
-        try:
-            self.display.write_row(line, text)
-            if (commit):
-                self.display.commit()
-        except:
-            self._logger.debug('Display currently unavailable.')
-
-    def clear(self, start=0, end=None, commit=False):
-        """ Clear row(s). """
-        try:
-            self.display.clear_rows(start, end)
-            if (commit):
-                self.display.commit()
-        except:
-            self._logger.debug('Display currently unavailable.')
-
-    def commit(self):
-        """ Commit data to be written on screen. """
-        try:
-            self.display.commit()
-        except:
-            self._logger.debug('Display currently unavailable.')
+    def protocol_gcode_sent_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
+        """ Listen for gcode commands, specifically M117 (Set LCD message) on the second line """
+        if (gcode is not None) and (gcode == 'M117'):
+            self._logger.info('Intercepted M117 gcode: {}'.format(cmd))
+            lines = textwrap.fill(
+                text=' '.join(cmd.split(' ')[1:]),
+                # Each char. is 8 px. wide
+                width=self._settings.get(['width'])/8,
+                max_lines=1  # No. of available lines
+            ).split('\n')
+            self._logger.info('Split message: "%s"', lines)
+            for i in range(0, len(lines)):
+                self._write_line_to_display(
+                    1+i, lines[i] if i < len(lines) else '')
+            self._commit_to_display()
 
     # ~~ Softwareupdate hook
 
@@ -152,6 +131,52 @@ class Ssd1306_pioled_displayPlugin(
                 ]
             }
         }
+
+    def get_settings_defaults(self):
+        return dict(
+            width=128,
+            height=32,
+        )
+
+    def on_settings_save(self, data):
+        # Cast values to integer before save.
+        for k in ('width', 'height'):
+            if data.get(k):
+                data[k] = max(0, int(data[k]))
+        octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
+
+    def get_template_configs(self):
+        return [
+            dict(type="navbar", custom_bindings=False),
+            dict(type="settings", custom_bindings=False)
+        ]
+
+    # Simplify calls related to display.
+
+    def _write_line_to_display(self, line, text, commit=False):
+        """ Write line to display. """
+        try:
+            self.display.write_row(line, text)
+            if (commit):
+                self.display.commit()
+        except:
+            self._logger.debug('Display currently unavailable.')
+
+    def _clear_display(self, start=0, end=None, commit=False):
+        """ Clear row(s). """
+        try:
+            self.display.clear_rows(start, end)
+            if (commit):
+                self.display.commit()
+        except:
+            self._logger.debug('Display currently unavailable.')
+
+    def _commit_to_display(self):
+        """ Commit data to be written on screen. """
+        try:
+            self.display.commit()
+        except:
+            self._logger.debug('Display currently unavailable.')
 
 
 # Set the Python version your plugin is compatible with below. Recommended is Python 3 only for all new plugins.

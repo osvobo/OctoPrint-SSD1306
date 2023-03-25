@@ -14,7 +14,7 @@ plugin_package = "octoprint_ssd1306oleddisplay"
 plugin_name = "SSD1306 OLED Display"
 
 # The plugin's version. Can be overwritten within OctoPrint's internal data via __plugin_version__ in the plugin module
-plugin_version = "0.1.3"
+plugin_version = "0.1.4rc0"
 
 # The plugin's description. Can be overwritten within OctoPrint's internal data via __plugin_description__ in the plugin
 # module
@@ -36,7 +36,7 @@ plugin_license = "AGPLv3"
 plugin_requires = [
     "adafruit-circuitpython-ssd1306",
     "Pillow",
-    "RPi.GPIO"
+    # "RPi.GPIO"
 ]
 
 ### --------------------------------------------------------------------------------------------------------------------
