@@ -88,7 +88,8 @@ class Ssd1306_pioled_displayPlugin(
             lines = textwrap.fill(
                 text=' '.join(cmd.split(' ')[1:]),
                 # Each char. is 8 px. wide
-                width=self._settings.get(['width'])/self._settings.get(['fontsize']),
+                width=self._settings.get(
+                    ['width'])/self._settings.get(['fontsize']),
                 max_lines=1  # No. of available lines
             ).split('\n')
             self._logger.debug('Split message: "%s"', lines)
@@ -96,42 +97,6 @@ class Ssd1306_pioled_displayPlugin(
                 self._write_line_to_display(
                     1+i, lines[i] if i < len(lines) else '')
             self._commit_to_display()
-
-    # ~~ Softwareupdate hook
-
-    def get_update_information(self):
-        # Define the configuration for your plugin to use with the Software Update
-        # Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
-        # for details.
-        return {
-            "ssd1306_pioled_display": {
-                "displayName": self._plugin_name,
-                "displayVersion": self._plugin_version,
-
-                # version check: github repository
-                "type": "github_release",
-                "user": "fredrikbaberg",
-                "repo": "OctoPrint-SSD1306",
-                "current": self._plugin_version,
-
-                # update method: pip
-                "pip": "https://github.com/fredrikbaberg/OctoPrint-SSD1306/archive/{target_version}.zip",
-
-                "stable_branch": {
-                    "name": "Stable",
-                    "branch": "main",
-                    "comittish": ["main"],
-                },
-
-                "prerelease_branches": [
-                    {
-                        "name": "Release Candidate",
-                        "branch": "rc",
-                        "comittish": ["rc", "main"],
-                    }
-                ]
-            }
-        }
 
     def get_settings_defaults(self):
         return dict(
@@ -180,6 +145,42 @@ class Ssd1306_pioled_displayPlugin(
             self.display.commit()
         except:
             self._logger.debug('Display currently unavailable.')
+
+    # ~~ Softwareupdate hook
+
+    def get_update_information(self):
+        # Define the configuration for your plugin to use with the Software Update
+        # Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
+        # for details.
+        return {
+            "ssd1306_pioled_display": {
+                "displayName": self._plugin_name,
+                "displayVersion": self._plugin_version,
+
+                # version check: github repository
+                "type": "github_release",
+                "user": "fredrikbaberg",
+                "repo": "OctoPrint-SSD1306",
+                "current": self._plugin_version,
+
+                # update method: pip
+                "pip": "https://github.com/fredrikbaberg/OctoPrint-SSD1306/archive/{target_version}.zip",
+
+                "stable_branch": {
+                    "name": "Stable",
+                    "branch": "main",
+                    "comittish": ["main"],
+                },
+
+                "prerelease_branches": [
+                    {
+                        "name": "Release Candidate",
+                        "branch": "rc",
+                        "comittish": ["rc", "main"],
+                    }
+                ]
+            }
+        }
 
 
 # Set the Python version your plugin is compatible with below. Recommended is Python 3 only for all new plugins.
