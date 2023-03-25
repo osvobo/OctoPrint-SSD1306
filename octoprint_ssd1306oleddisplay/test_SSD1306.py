@@ -91,5 +91,21 @@ class TestSSD1306:
         assert self.display._height == 2*height
         assert self.display._fontsize == fontsize
 
+    def test_change_fontsize(self):
+        for i in [1, 2]:
+            self.display = SSD1306(
+                width=width,
+                height=height,
+                fontsize=i*fontsize,
+            )
+            assert self.display._fontsize == i*fontsize
+            self.display.write_row(0, 'Test fontsize {}'.format(str(i)))
+            self.display.commit()
+            self.display.start()
+            sleep(1/self.display._refresh_rate)
+            self.display._image.save('test/larger_font{}.png'.format(str(i)))
+            self.display.clear_rows()
+            self.display.stop()
+
     def test_log(self):
         assert self.display.log('Test') == None

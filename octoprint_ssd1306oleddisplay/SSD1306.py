@@ -41,9 +41,9 @@ class SSD1306(threading.Thread):
         self._y_offset = 0
         self._logger = logger
         self._refresh_rate = refresh_rate
-        self._font = ImageFont.load_default()
-        # self._font = ImageFont.truetype(find_resource(
-        #     'font/PressStart2P.ttf'), self._fontsize)
+        # self._font = ImageFont.load_default()
+        self._font = ImageFont.truetype(find_resource(
+            'font/PressStart2P.ttf'), self._fontsize)
         self._image = Image.new('1', (self._width, self._height))
         self._draw = ImageDraw.Draw(self._image)
         # Start with the same number of rows as set by dimensions.
@@ -133,6 +133,7 @@ class SSD1306(threading.Thread):
                 self._display.image(self._image)  # Send image to display
                 self._display.show()  # Show
             except:
+                self._image.save('test/img.png')
                 self.log('Failed to send to display', level=DEBUG)
             sleep(1/self._refresh_rate)
 
