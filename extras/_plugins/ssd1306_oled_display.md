@@ -83,5 +83,6 @@ compatibility:
 
 ---
 
-**TODO**: Longer description of your plugin, configuration examples etc. This part will be visible on the page at
-http://plugins.octoprint.org/plugin/ssd1306_oled_display/
+This plugin enables the use of a SSD1306-based display to present printer- and job- status for OctoPrint.
+
+It's based on [https://github.com/jhoos/OctoPrint-SSD1306](https://github.com/jhoos/OctoPrint-SSD1306) but adopted to Python3 and a 128x32 PiOLED display.
