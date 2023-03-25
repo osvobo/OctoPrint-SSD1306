@@ -24,7 +24,7 @@ plugin_description = """Octoprint plugin to display information on a SSD1306-bas
 plugin_author = "Fredrik Baberg"
 
 # The plugin's author's mail address.
-# plugin_author_email = ""
+plugin_author_email = "fredrik.baberg@gmail.com"
 
 # The plugin's homepage URL. Can be overwritten within OctoPrint's internal data via __plugin_url__ in the plugin module
 plugin_url = "https://github.com/fredrikbaberg/OctoPrint-SSD1306"
