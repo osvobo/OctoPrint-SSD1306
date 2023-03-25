@@ -36,7 +36,7 @@ plugin_license = "AGPLv3"
 plugin_requires = [
     "adafruit-circuitpython-ssd1306",
     "Pillow",
-    # "RPi.GPIO"
+    "RPi.GPIO"
 ]
 
 ### --------------------------------------------------------------------------------------------------------------------
