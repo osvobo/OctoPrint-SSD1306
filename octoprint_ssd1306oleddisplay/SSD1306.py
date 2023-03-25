@@ -64,7 +64,7 @@ class SSD1306(threading.Thread):
                 self._rows[i] = ''
         else:
             self.log('Indices out of range for clear_rows: [{}, {}] but should be in [{}, {}]'.format(
-                start, _end, 0, len(self._rows)-1), level=WARN)
+                start, _end, 0, len(self._rows)-1), level=INFO)
 
     # Write content to row.
     def write_row(self, row, text):
@@ -73,7 +73,7 @@ class SSD1306(threading.Thread):
             self._rows[row] = text
         else:
             self.log('Row index too large, {} > {}'.format(
-                row, len(self._rows)), level=WARN)
+                row, len(self._rows)), level=INFO)
 
     def commit(self):
         """ Send data to be shown on the display. """

@@ -29,14 +29,15 @@ class Ssd1306_pioled_displayPlugin(
         self.display = SSD1306(
             width=self._settings.get(['width']),
             height=self._settings.get(['height']),
-            refresh_rate=1,
+            fontsize=self._settings.get(['fontsize']),
+            refresh_rate=self._settings.get(['refreshrate']),
             logger=self._logger
         )
         self.display.start()
         self._clear_display()
         self._write_line_to_display(0, 'Initialized', commit=True)
         self._printer.register_callback(self)
-        self._logger.info('Initialized.')
+        self._logger.debug('Initialized.')
 
     def on_shutdown(self):
         self._printer.unregister_callback(self)
@@ -83,14 +84,14 @@ class Ssd1306_pioled_displayPlugin(
     def protocol_gcode_sent_hook(self, comm_instance, phase, cmd, cmd_type, gcode, *args, **kwargs):
         """ Listen for gcode commands, specifically M117 (Set LCD message) on the second line """
         if (gcode is not None) and (gcode == 'M117'):
-            self._logger.info('Intercepted M117 gcode: {}'.format(cmd))
+            self._logger.debug('Intercepted M117 gcode: {}'.format(cmd))
             lines = textwrap.fill(
                 text=' '.join(cmd.split(' ')[1:]),
                 # Each char. is 8 px. wide
-                width=self._settings.get(['width'])/8,
+                width=self._settings.get(['width'])/self._settings.get(['fontsize']),
                 max_lines=1  # No. of available lines
             ).split('\n')
-            self._logger.info('Split message: "%s"', lines)
+            self._logger.debug('Split message: "%s"', lines)
             for i in range(0, len(lines)):
                 self._write_line_to_display(
                     1+i, lines[i] if i < len(lines) else '')
@@ -136,11 +137,13 @@ class Ssd1306_pioled_displayPlugin(
         return dict(
             width=128,
             height=32,
+            fontsize=8,
+            refreshrate=1,
         )
 
     def on_settings_save(self, data):
         # Cast values to integer before save.
-        for k in ('width', 'height'):
+        for k in ('width', 'height', 'fontsize', 'refreshrate'):
             if data.get(k):
                 data[k] = max(0, int(data[k]))
         octoprint.plugin.SettingsPlugin.on_settings_save(self, data)
