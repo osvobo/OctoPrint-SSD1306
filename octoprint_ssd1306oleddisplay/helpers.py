@@ -27,10 +27,10 @@ def format_temp(tool, temp):
     tool_txt = tool[0].upper()
     if tool[-1].isdigit():
         tool_txt += tool[-1]
-    target_dir = '_'
+    target_dir = ''
     if temp['target'] > 0:
         if abs(temp['target'] - temp['actual']) < 5:
-            target_dir = '-'
+            target_dir = 'ok'
         else:
-            target_dir = '/' if temp['target'] > temp['actual'] else '\\'
+            target_dir = '+' if temp['target'] > temp['actual'] else '-'
     return '{}:{}{}'.format(tool_txt, int(temp['actual']), target_dir)
