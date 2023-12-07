@@ -41,3 +41,12 @@ pi@OctoPi:~ $ i2cdetect -y 1
 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 70: -- -- -- -- -- -- -- --
 ```
+
+
+## OS notes
+to make changes copy the whole repo folder, enter it and:
+```
+~/oprint/bin/activate
+pip install .
+sudo service octoprint restart
+```
