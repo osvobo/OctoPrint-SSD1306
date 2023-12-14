@@ -11,6 +11,10 @@ from octoprint_ssd1306oleddisplay.helpers import format_seconds, format_temp
 
 from .SSD1306 import SSD1306
 
+import socket
+hostname = socket.gethostname()
+IPAddr = socket.gethostbyname(hostname)
+
 
 class Ssd1306_oled_displayPlugin(
     octoprint.plugin.StartupPlugin,
@@ -35,7 +39,7 @@ class Ssd1306_oled_displayPlugin(
         )
         self.display.start()
         self._clear_display()
-        self._write_line_to_display(0, 'Initialized', commit=True)
+        self._write_line_to_display(0, IPAddr, commit=True)
         self._printer.register_callback(self)
         self._logger.debug('Initialized')
 
@@ -52,8 +56,9 @@ class Ssd1306_oled_displayPlugin(
                 0, 'Error! {}'.format(payload['error']), commit=True)
         elif event == Events.PRINTER_STATE_CHANGED:
             self._write_line_to_display(0, payload['state_string'])
-            if payload['state_id'] == 'OFFLINE':  # Clear printer/job messages if offline
-                self._clear_display(start=1, commit=True)
+            self._write_line_to_display(1, IPAddr)
+            #if payload['state_id'] == 'OFFLINE':  # Clear printer/job messages if offline
+            #    self._clear_display(start=1, commit=True)
         elif event == Events.SHUTDOWN:
             self._clear_display(commit=True)
 

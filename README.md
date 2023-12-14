@@ -50,3 +50,15 @@ to make changes copy the whole repo folder, enter it and:
 pip install .
 sudo service octoprint restart
 ```
+
+If ~/oprint/bin/activate is not working:
+```
+	1) Cd ~/oprint/bin/
+	2) chmod u+x  activate
+    3) source /home/pi/oprint/bin/activate
+```
+
+get ip in bash:
+```
+ip addr show $(ip route | awk '/default/ { print $5 }') | grep "inet" | head -n 1 | awk '/inet/ {print $2}' | cut -d'/' -f1
+```
