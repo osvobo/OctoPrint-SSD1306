@@ -46,16 +46,17 @@ pi@OctoPi:~ $ i2cdetect -y 1
 ## OS notes
 to make changes copy the whole repo folder, enter it and:
 ```
-~/oprint/bin/activate
+#~/oprint/bin/activate
+source /home/pi/oprint/bin/activate
 pip install .
 sudo service octoprint restart
 ```
 
 If ~/oprint/bin/activate is not working:
 ```
-	1) Cd ~/oprint/bin/
-	2) chmod u+x  activate
-    3) source /home/pi/oprint/bin/activate
+cd ~/oprint/bin/
+chmod u+x  activate
+source /home/pi/oprint/bin/activate
 ```
 
 get ip in bash:

@@ -56,7 +56,8 @@ class Ssd1306_oled_displayPlugin(
                 0, 'Error! {}'.format(payload['error']), commit=True)
         elif event == Events.PRINTER_STATE_CHANGED:
             self._write_line_to_display(0, payload['state_string'])
-            self._write_line_to_display(1, IPAddr)
+            self._write_line_to_display(1, "Nečum!")
+            #self._write_line_to_display(1, IPAddr)
             #if payload['state_id'] == 'OFFLINE':  # Clear printer/job messages if offline
             #    self._clear_display(start=1, commit=True)
         elif event == Events.SHUTDOWN:
