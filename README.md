@@ -45,6 +45,7 @@ pi@OctoPi:~ $ i2cdetect -y 1
 
 ## OS notes
 to make changes copy the whole repo folder, enter it and:
+cd /home/pi/myScripts/OctoPrint-SSD1306
 ```
 #~/oprint/bin/activate
 source /home/pi/oprint/bin/activate
